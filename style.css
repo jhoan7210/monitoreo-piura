@@ -1,11 +1,11 @@
-/* Configuración General */
+/* --- CONFIGURACIÓN BASE --- */
 body, html {
     margin: 0;
     padding: 0;
     height: 100%;
     width: 100%;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow: hidden;
+    overflow: hidden; /* Evita el scroll innecesario en la página */
 }
 
 #map {
@@ -14,52 +14,76 @@ body, html {
     z-index: 1;
 }
 
-/* PANEL IZQUIERDO: ESTADÍSTICAS (Inferior Izquierda) */
-.stats-panel-fixed {
+/* --- PANELES FLOTANTES (ESCRITORIO) --- */
+.info-panel, .stats-panel-fixed {
     position: absolute;
-    bottom: 30px;
-    left: 20px;
     z-index: 1000;
     background: rgba(255, 255, 255, 0.95);
-    padding: 18px;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    width: 220px;
 }
 
-.stats-panel-fixed h4 {
-    margin: 0 0 10px 0;
-    font-size: 14px;
-    color: #2c3e50;
-    text-transform: uppercase;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 5px;
-}
-
-/* PANEL DERECHO: GESTIÓN (Superior Derecha) */
+/* Panel de Gestión (Derecha) */
 .info-panel { 
-    position: absolute; 
     top: 20px; 
     right: 20px; 
-    z-index: 1000;
-    background: rgba(255, 255, 255, 0.98); 
-    padding: 25px; 
-    border-radius: 15px; 
-    box-shadow: 0 8px 30px rgba(0,0,0,0.25); 
-    width: 280px;
+    width: 260px; 
+    padding: 20px; 
 }
 
-/* ELIMINACIÓN DE RECUADROS EN NOMBRES */
-.leaflet-tooltip-pane .label-distrito {
-    background-color: transparent !important;
+/* Panel de Resumen (Izquierda) */
+.stats-panel-fixed { 
+    bottom: 30px; 
+    left: 20px; 
+    width: 160px; 
+    padding: 15px; 
+}
+
+/* --- DISEÑO RESPONSIVO PARA CELULARES --- */
+@media screen and (max-width: 600px) {
+    .info-panel { 
+        top: 10px; 
+        right: 10px; 
+        width: 150px; 
+        padding: 12px; 
+        font-size: 11px; 
+    }
+    
+    .stats-panel-fixed { 
+        bottom: 10px; 
+        left: 10px; 
+        width: 110px; 
+        padding: 8px; 
+        font-size: 10px; 
+    }
+
+    .info-panel h2, .info-panel h3 { 
+        font-size: 13px; 
+        margin: 5px 0; 
+    }
+
+    .status-btn { 
+        padding: 8px; 
+        font-size: 10px; 
+    }
+
+    input[type="text"] { 
+        padding: 8px; 
+        font-size: 11px; 
+    }
+}
+
+/* --- ETIQUETAS DE NOMBRES EN EL MAPA --- */
+.label-distrito {
+    background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    font-weight: 800;
+    font-weight: bold;
     color: #2c3e50;
-    text-shadow: 1px 1px 1px white, -1px -1px 1px white; /* Halo de lectura */
     font-size: 9px;
+    text-shadow: 1px 1px 1px white; /* Mejora la lectura sobre colores fuertes */
     text-transform: uppercase;
-    pointer-events: none;
+    pointer-events: none; /* Evita que el texto bloquee los clics en el mapa */
 }
 
 /* Quitar flecha del tooltip de Leaflet */
@@ -67,20 +91,76 @@ body, html {
     display: none !important;
 }
 
-/* Botones de Colores */
+/* --- BOTONES Y FORMULARIOS --- */
 .status-btn { 
-    border: none; padding: 12px; border-radius: 8px; cursor: pointer; 
-    color: white; margin: 6px 0; font-weight: bold; width: 100%; transition: transform 0.2s;
+    width: 100%; 
+    color: white; 
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    margin: 4px 0; 
+    transition: transform 0.1s;
 }
-.status-btn:hover { transform: scale(1.02); }
+
+.status-btn:active { transform: scale(0.98); }
+
 .btn-red { background: #e74c3c; }
 .btn-yellow { background: #f1c40f; color: #2c3e50; }
 .btn-green { background: #2ecc71; }
 
-/* Botones Especiales */
-.btn-edit { background: #34495e; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-.btn-export { background: #27ae60; color: white; width: 100%; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-.btn-delete { width: 100%; padding: 10px; margin-top: 10px; background: white; color: #c0392b; border: 2px solid #c0392b; border-radius: 8px; cursor: pointer; font-weight: bold; }
-.btn-back { width: 100%; padding: 10px; margin-top: 8px; cursor: pointer; border: 1px solid #ccc; background: #f9f9f9; border-radius: 8px; }
+.btn-edit { 
+    background: #34495e; 
+    color: white; 
+    width: 100%; 
+    padding: 10px; 
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    margin-top: 10px; 
+    font-weight: bold;
+}
 
-input[type="text"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+.btn-delete { 
+    width: 100%; 
+    border: 1px solid #c0392b; 
+    color: #c0392b; 
+    background: white; 
+    padding: 8px; 
+    border-radius: 6px; 
+    margin-top: 5px; 
+    cursor: pointer; 
+    font-weight: bold;
+}
+
+.btn-back { 
+    width: 100%; 
+    margin-top: 5px; 
+    background: #eee; 
+    border: none; 
+    padding: 8px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+}
+
+.btn-export {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+input[type="text"] { 
+    width: 100%; 
+    padding: 10px; 
+    margin: 8px 0; 
+    border: 1px solid #ddd; 
+    border-radius: 6px; 
+    box-sizing: border-box; 
+}
