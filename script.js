@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
-// 1. Configuración
+// 1. Configuración de Firebase (Tus credenciales reales)
 const firebaseConfig = {
     apiKey: "AIzaSyDx33MvRnQJa-Q8l6FQrLoyz5z2RG4Mg3A",
     authDomain: "monitoreo-piura.firebaseapp.com",
@@ -16,7 +16,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// 2. Mapa
+// 2. Configuración del Mapa
 const map = L.map('map', { tap: true }).setView([-5.19, -80.63], 8);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
 
@@ -24,17 +24,17 @@ let monitoreoData = {};
 let selectedLayer = null;
 let geoLayer;
 
-// 3. Limpiador de texto (Ñ y tildes)
+// Función para corregir Ñ y tildes
 function limpiarTexto(t) {
     if (!t) return "";
     return t.replace(/Ã‘/g, "Ñ").replace(/Ã¡/g, "Á").replace(/Ã©/g, "É").replace(/Ã/g, "Í").replace(/Ã³/g, "Ó").replace(/Ãº/g, "Ú");
 }
 
-// 4. Sincronización en Tiempo Real (Actualiza Mapa y Resumen)
+// 3. Sincronización en Tiempo Real (Mapa y Resumen)
 onValue(ref(db, 'monitoreo'), (snapshot) => {
     monitoreoData = snapshot.val() || {};
     
-    // Actualiza colores en el mapa
+    // Repintar colores en el mapa
     if (geoLayer) {
         geoLayer.setStyle(f => {
             const name = limpiarTexto(f.properties.NOMBDIST);
@@ -43,19 +43,19 @@ onValue(ref(db, 'monitoreo'), (snapshot) => {
         });
     }
     
-    // Actualiza los números del cuadro RESUMEN
+    // Actualizar cuadro de RESUMEN automáticamente
     let r=0, a=0, v=0;
-    Object.values(monitoreoData).forEach(i => {
-        if(i.color === '#e74c3c') r++;
-        else if(i.color === '#f1c40f') a++;
-        else if(i.color === '#2ecc71') v++;
+    Object.values(monitoreoData).forEach(dist => {
+        if(dist.color === '#e74c3c') r++;
+        else if(dist.color === '#f1c40f') a++;
+        else if(dist.color === '#2ecc71') v++;
     });
     document.getElementById('count-rojo').innerText = r;
     document.getElementById('count-amarillo').innerText = a;
     document.getElementById('count-verde').innerText = v;
 });
 
-// 5. Cargar Distritos
+// 4. Cargar GeoJSON de Piura
 fetch('LIM_DISTRITAL_PIURA_MIN.json')
     .then(res => res.json())
     .then(data => {
@@ -74,7 +74,7 @@ fetch('LIM_DISTRITAL_PIURA_MIN.json')
         }).addTo(map);
     });
 
-// 6. Funciones de Guardado
+// 5. Lógica de Guardado en la Nube
 function guardarDato(colorHex) {
     if (!selectedLayer) return;
     const name = limpiarTexto(selectedLayer.feature.properties.NOMBDIST);
@@ -87,15 +87,7 @@ function guardarDato(colorHex) {
     mostrarVistaPrevia(name);
 }
 
-window.eliminarEstado = function() {
-    const name = limpiarTexto(selectedLayer.feature.properties.NOMBDIST);
-    if(confirm("¿Borrar datos de " + name + "?")) {
-        remove(ref(db, 'monitoreo/' + name));
-        regresar();
-    }
-};
-
-// 7. Interfaz
+// 6. Eventos de Interfaz
 function mostrarVistaPrevia(n) {
     const i = monitoreoData[n] || { encargado: 'Sin asignar', color: '#3498db' };
     document.getElementById('content-default').style.display = 'none';
@@ -116,7 +108,7 @@ function regresar() {
     document.getElementById('content-default').style.display = 'block';
 }
 
-// 8. Eventos de Botones
+// 7. Configuración de Botones (Listeners)
 document.getElementById('btn-abrir-editor').onclick = () => {
     const name = limpiarTexto(selectedLayer.feature.properties.NOMBDIST);
     const info = monitoreoData[name] || { encargado: '' };
@@ -129,10 +121,15 @@ document.getElementById('btn-abrir-editor').onclick = () => {
 document.getElementById('btn-rojo').onclick = () => guardarDato('#e74c3c');
 document.getElementById('btn-amarillo').onclick = () => guardarDato('#f1c40f');
 document.getElementById('btn-verde').onclick = () => guardarDato('#2ecc71');
-document.getElementById('btn-eliminar').onclick = () => eliminarEstado();
+document.getElementById('btn-eliminar').onclick = () => {
+    const name = limpiarTexto(selectedLayer.feature.properties.NOMBDIST);
+    if(confirm("¿Borrar datos?")) remove(ref(db, 'monitoreo/' + name));
+    regresar();
+};
 document.getElementById('btn-cerrar-view').onclick = () => regresar();
 document.getElementById('btn-cancelar-edit').onclick = () => mostrarVistaPrevia(limpiarTexto(selectedLayer.feature.properties.NOMBDIST));
 
+// Exportar CSV
 document.getElementById('btn-csv').onclick = () => {
     let csv = "\ufeffDistrito;Encargado;Estado\n";
     Object.keys(monitoreoData).forEach(d => {
