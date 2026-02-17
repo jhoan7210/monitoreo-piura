@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Monitoreo Regional - Piura</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoreo Piura - Local</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
@@ -10,41 +11,37 @@
 <body>
 
     <div class="stats-panel-fixed">
-        <h4>Resumen General</h4>
+        <h4>Resumen</h4>
         <div class="stats-grid">
-            <p>🔴 Críticos: <span id="count-rojo">0</span></p>
-            <p>🟡 En Proceso: <span id="count-amarillo">0</span></p>
-            <p>🟢 Completados: <span id="count-verde">0</span></p>
+            <p>🔴 <span id="count-rojo">0</span></p>
+            <p>🟡 <span id="count-amarillo">0</span></p>
+            <p>🟢 <span id="count-verde">0</span></p>
         </div>
-        <button class="btn-export" onclick="exportarCSV()">📥 Descargar Reporte (CSV)</button>
+        <button class="btn-export" onclick="exportarCSV()">📥 CSV</button>
     </div>
 
     <div class="info-panel">
         <div id="content-default">
-            <h3>Monitoreo Piura</h3>
-            <p>Haz clic en un distrito para gestionar su estado.</p>
+            <h3>Monitoreo</h3>
+            <p>Selecciona un distrito.</p>
         </div>
 
         <div id="content-view" style="display:none;">
             <h2 id="view-distrito"></h2>
             <p><strong>Responsable:</strong> <span id="view-encargado"></span></p>
             <p><strong>Estado:</strong> <span id="view-estado"></span></p>
-            <button class="btn-edit" id="btn-abrir-editor">⚙️ Editar Información</button>
-            <button class="btn-back" onclick="regresar()">Cerrar Vista</button>
+            <button class="btn-edit" id="btn-abrir-editor">⚙️ Editar</button>
+            <button class="btn-back" onclick="regresar()">Cerrar</button>
         </div>
 
         <div id="editor" style="display:none;">
             <h3 id="edit-distrito-titulo"></h3>
-            <label><strong>Persona encargada:</strong></label>
             <input type="text" id="input-encargado" placeholder="Escriba el nombre...">
-            
-            <p><strong>Actualizar Estado:</strong></p>
             <button class="status-btn btn-red" onclick="updateStatus('rojo')">🔴 Crítico</button>
-            <button class="status-btn btn-yellow" onclick="updateStatus('amarillo')">🟡 En Proceso</button>
-            <button class="status-btn btn-green" onclick="updateStatus('verde')">🟢 Completado</button>
-            <button class="btn-delete" onclick="eliminarEstado()">🗑️ Eliminar Estado</button>
-            <hr>
-            <button class="btn-back" onclick="cancelarEdicion()">Cancelar</button>
+            <button class="status-btn btn-yellow" onclick="updateStatus('amarillo')">🟡 Proceso</button>
+            <button class="status-btn btn-green" onclick="updateStatus('verde')">🟢 Hecho</button>
+            <button class="btn-delete" onclick="eliminarEstado()">🗑️ Borrar</button>
+            <button class="btn-back" onclick="cancelarEdicion()">Volver</button>
         </div>
     </div>
 
